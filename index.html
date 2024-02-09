@@ -6,30 +6,47 @@
     <title>Registro de Producción</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="styles.css">
+    <!-- CSS de Bootstrap -->
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- JavaScript de Bootstrap (requiere jQuery) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <h1>Registro de Producción</h1>
+        <h1 class="text-center">Registro de Producción</h1>
         <form id="loginForm">
-            <input type="text" id="username" placeholder="Usuario" required>
-            <input type="password" id="password" placeholder="Contraseña" required>
-            <button type="submit">Iniciar sesión</button>
+            <input type="text" id="username" class="form-control mb-3" placeholder="Usuario" required>
+            <input type="password" id="password" class="form-control mb-3" placeholder="Contraseña" required>
+            <button type="submit" class="btn btn-primary">Iniciar sesión</button>
         </form>
         <form id="registrationFormSupervisor" class="hidden">
             <div class="supervisor-info">
-                <h2>Formulario para Supervisores</h2>
-                <input type="text" id="idSupervisor" placeholder="ID Supervisor" required>
-                <input type="text" id="nombreSupervisor" placeholder="Nombre" required>
-                <input type="datetime-local" id="fechaProceso" placeholder="Fecha proceso" required>
+                <h2 class="text-center mb-4">Formulario para Supervisores</h2>
+                <div class="row">
+                    <div class="col-md-6">
+                        <input type="text" id="idSupervisor" class="form-control mb-3" placeholder="ID:21311" required disabled>
+                    </div>
+                    <div class="col-md-6">
+                        <input type="text" id="nombreSupervisor" class="form-control mb-3" placeholder="José Lopez" required disabled>
+                    </div>
+                    <div class="col-md-12">
+                        <input type="datetime-local" id="fechaProceso" class="form-control mb-3" placeholder="Fecha proceso" required disabled>
+                    </div>
+                </div>
             </div>
             <div class="worker-info">
-                <h2>Formulario para Trabajadores</h2>
+                <h2 class="text-center mb-4">Formulario para Trabajadores</h2>
                 <div class="person-forms-container" id="personForms">
                     <!-- Los formularios de las personas se añadirán aquí -->
                 </div>
-                <button id="prevButton" type="button">Anterior</button>
-                <button id="nextButton" type="button">Siguiente</button>
-                <button id="submitButtonSupervisor" type="submit">Enviar</button>
+                <div class="text-center">
+                    <button id="prevButton" type="button" class="btn btn-secondary mr-2">Anterior</button>
+                    <button id="nextButton" type="button" class="btn btn-primary mr-2">Siguiente</button>
+                    <button id="submitButtonSupervisor" type="submit" class="btn btn-success">Enviar</button>
+                </div>
             </div>
         </form>
         <div id="chartsViewGerente" class="hidden">
@@ -42,3 +59,4 @@
     <script src="script.js"></script>
 </body>
 </html>
+

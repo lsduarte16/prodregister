@@ -5,7 +5,7 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    min-height: 100vh;
     background-color: #f1f1f1;
 }
 
@@ -18,7 +18,7 @@ body {
 }
 
 h1 {
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 input {
@@ -88,12 +88,12 @@ button:hover {
 
 .person-info,
 .indicators {
-    width: 48%; /* Ajusta el ancho de las columnas según sea necesario */
+    width: 48%;
 }
 
 .person-info input,
 .indicators input {
-    width: calc(100% - 24px); /* Reduce el ancho de los inputs para permitir el espacio para el borde */
+    width: calc(100% - 24px);
     padding: 10px;
     margin-bottom: 10px;
     border: 1px solid #ccc;
@@ -102,12 +102,12 @@ button:hover {
 }
 
 .person-info input[type="file"] {
-    margin-bottom: 20px; /* Espacio adicional para el campo de carga de archivos */
+    margin-bottom: 20px;
 }
 
 .personForm img {
-    max-width: 200px; /* Ajusta el ancho máximo según tus necesidades */
-    height: auto; /* Esto mantiene la proporción de la imagen */
+    max-width: 200px;
+    height: auto;
 }
 
 #prevButton {
@@ -125,6 +125,12 @@ button:hover {
 }
 
 #submitButtonSupervisor:disabled {
-    background-color: #999; /* Cambia el color de fondo cuando el botón está desactivado */
-    cursor: not-allowed; /* Cambia el cursor cuando el botón está desactivado */
+    background-color: #999;
+    cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+    h1 {
+        font-size: 24px; /* Reducir el tamaño del texto para resoluciones más pequeñas */
+    }
 }
