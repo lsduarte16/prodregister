@@ -1,0 +1,32 @@
+[
+    {
+        "id": 1,
+        "name": "Juan Pérez",
+        "position": "Operario",
+        "image": "trab1"
+    },
+    {
+        "id": 2,
+        "name": "María López",
+        "position": "Supervisor",
+        "image": "trab4.jpeg"
+    },
+    {
+        "id": 3,
+        "name": "Carlos García",
+        "position": "Técnico",
+        "image": "trab5.jpeg"
+    },
+    {
+        "id": 4,
+        "name": "Ana Martínez",
+        "position": "Analista",
+        "image": "trab2"
+    },
+    {
+        "id": 5,
+        "name": "Pedro Sánchez",
+        "position": "Ingeniero",
+        "image": "trab9"
+    }
+]

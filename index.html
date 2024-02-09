@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Producción</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Registro de Producción</h1>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Usuario" required>
+            <input type="password" id="password" placeholder="Contraseña" required>
+            <button type="submit">Iniciar sesión</button>
+        </form>
+        <form id="registrationFormSupervisor" class="hidden">
+            <div class="supervisor-info">
+                <h2>Formulario para Supervisores</h2>
+                <input type="text" id="idSupervisor" placeholder="ID Supervisor" required>
+                <input type="text" id="nombreSupervisor" placeholder="Nombre" required>
+                <input type="datetime-local" id="fechaProceso" placeholder="Fecha proceso" required>
+            </div>
+            <div class="worker-info">
+                <h2>Formulario para Trabajadores</h2>
+                <div class="person-forms-container" id="personForms">
+                    <!-- Los formularios de las personas se añadirán aquí -->
+                </div>
+                <button id="prevButton" type="button">Anterior</button>
+                <button id="nextButton" type="button">Siguiente</button>
+                <button id="submitButtonSupervisor" type="submit">Enviar</button>
+            </div>
+        </form>
+        <div id="chartsViewGerente" class="hidden">
+            <!-- Vista con gráficos para gerentes -->
+            <canvas id="myChart" width="400" height="400"></canvas>
+        </div>
+        <div id="successMessage" class="hidden"></div>
+        <div id="alert" class="hidden"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
