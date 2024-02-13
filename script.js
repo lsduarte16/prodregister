@@ -4,20 +4,24 @@ const successMessage = document.getElementById('successMessage');
 const registrationForm = document.getElementById('registrationFormSupervisor');
 const chartsViewGerente = document.getElementById('chartsViewGerente');
 
+
 loginForm.addEventListener('submit', async function(e) {
     e.preventDefault();
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
-    
+
     try {
-        const response = await authenticateUser(username, password);
-        
+        const response = await authenticateUserWithAPI(username, password);
+        console.log(response)
+
         if (response.success) {
             showAlert('success', response.message);
             loginForm.classList.add('hidden');
 
             if (response.role === 'supervisor') {
                 registrationForm.classList.remove('hidden');
+                document.getElementById('nombreSupervisor').value = response.nombre;
+                document.getElementById('idSupervisor').value = response.idSupervisor;
                 // Cargar la fecha y hora actual en el campo de Fecha Proceso
                 const currentDate = new Date();
                 const year = currentDate.getFullYear();
@@ -27,6 +31,7 @@ loginForm.addEventListener('submit', async function(e) {
                 const minutes = ('0' + currentDate.getMinutes()).slice(-2);
                 const formattedDate = `${year}-${month}-${day}T${hours}:${minutes}`;
                 document.getElementById('fechaProceso').value = formattedDate;
+                  // Llamada a la función createPersonForm con employeesData como parámetro
             } else if (response.role === 'gerente') {
                 chartsViewGerente.classList.remove('hidden');
                 showCharts();
@@ -40,24 +45,60 @@ loginForm.addEventListener('submit', async function(e) {
     }
 });
 
-async function authenticateUser(username, password) {
+async function authenticateUserWithAPI(username, password) {
     try {
-        // Cargar datos de usuarios desde el archivo JSON local
-        const response = await fetch('user.json');
-        const users = await response.json();
+        const response = await fetch('https://sa-east-1.aws.data.mongodb-api.com/app/apione-qfdvx/endpoint/api', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                username: username,
+                password: password
+            })
+        });
 
-        // Buscar usuario en la lista
-        const user = users.find(user => user.username === username && user.password === password);
+        const data = await response.json();
 
-        if (user) {
-            return { success: true, message: '¡Acceso exitoso!', role: user.role };
+        if (response.ok) {
+            let employeesData = [];
+
+            // Si el usuario autenticado es un supervisor, obtener la lista de empleados
+            if (data.role === 'supervisor') {
+                const employeesResponse = await fetch('https://sa-east-1.aws.data.mongodb-api.com/app/apione-qfdvx/endpoint/employees', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        supervisorId: data.idSupervisor
+                    })
+                });
+
+                employeesData = await employeesResponse.json();
+
+
+            }
+
+            return { 
+                success: true, 
+                message: '¡Acceso exitoso!', 
+                role: data.role, 
+                nombre: data.nombre, 
+                idSupervisor: data.idSupervisor, 
+                employees: employeesData 
+                
+            };
+
         } else {
             return { success: false, message: 'Usuario o contraseña incorrectos' };
         }
     } catch (error) {
         throw new Error('Error al cargar datos de usuario');
     }
+
 }
+
 
 function showCharts() {
     // Lógica para mostrar los gráficos
@@ -79,6 +120,7 @@ function showSuccessMessage(message) {
     successMessage.classList.remove('hidden');
 }
 
+
 document.addEventListener('DOMContentLoaded', async function() {
     const personFormsContainer = document.getElementById('personForms');
     const prevButton = document.getElementById('prevButton');
@@ -87,10 +129,11 @@ document.addEventListener('DOMContentLoaded', async function() {
     const formData = new Array(5).fill({}); // Array para almacenar los datos de cada formulario
     let currentPersonIndex = 0;
     
-    async function createPersonForm(index) {
+    
+    async function createPersonForm(index, employeesData) {
         // Limpiar el contenedor de formularios de persona antes de agregar uno nuevo
         personFormsContainer.innerHTML = '';
-    
+        console.log(employeesData);
         const personForm = document.createElement('div');
         personForm.classList.add('personForm', 'container-fluid', 'mt-4', 'border', 'p-4', 'rounded'); // Cambiar a container-fluid para ocupar todo el ancho
         personFormsContainer.appendChild(personForm);
@@ -101,9 +144,23 @@ document.addEventListener('DOMContentLoaded', async function() {
     
         // Obtener los datos de los empleados desde el archivo JSON
         const response = await fetch('employers.json');
+        console.log(response);
         const employees = await response.json();
+        console.log(employees);
         const employee = employees[index];
-    
+        console.log(employee);
+
+
+        // Obtener los datos de los empleados desde el archivo JSON
+        //const response1 = employeesData;
+        //console.log(response1);
+        //console.log(employeesData)
+        //const employees1 = await employeesData;
+        //console.log(employees1);
+        //const employee1 = employees1[index];
+        //console.log(employee1);
+
+                
         // Crear elementos para mostrar la información del empleado
         const imageContainer = document.createElement('div');
         imageContainer.classList.add('col-md-4', 'text-center', 'mb-3'); // Agregar clases de Bootstrap para columnas y centrado
@@ -191,18 +248,20 @@ document.addEventListener('DOMContentLoaded', async function() {
             updateSubmitButtonState();
         }
     }
-
+    
     // Función para guardar los datos del formulario actual en el array formData
     function saveFormData() {
     const inputs = document.querySelectorAll('.personForm input');
     const currentFormData = {};
-
+        
     inputs.forEach((input, index) => {
         currentFormData[`indicator${index + 1}`] = input.value.trim();
-    });
-
-    formData[currentPersonIndex] = currentFormData;
-    console.log(formData);
+        });
+    
+    documentoInsertar = currentFormData;
+    insertIndicatorDocument(documentoInsertar);
+    //formData[currentPersonIndex] = currentFormData;
+    //console.log(formData);
 }
 
     // Función para actualizar el estado del botón de enviar
@@ -224,10 +283,13 @@ document.addEventListener('DOMContentLoaded', async function() {
     });
 
     // Manejar el evento del botón de enviar
+
     submitButton.addEventListener('click', function() {
         // Guardar los datos del último formulario antes de enviarlo
         saveFormData();
-        // Aquí se puede enviar el formulario
+        // Insertar los indicadores en la base de datos
+        insertIndicatorDocument(documentoInsertar);
+        // Notificar al usuario que el formulario fue enviado exitosamente
         alert('¡Formulario enviado exitosamente!');
     });
 });

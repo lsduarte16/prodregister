@@ -1,32 +1,37 @@
 [
     {
-        "id": 1,
+        "id": "1f45fe",
         "name": "Juan Pérez",
         "position": "Operario",
-        "image": "trab1"
+        "image": "trab1",
+        "supervisorId": "4d5e36f"
     },
     {
-        "id": 2,
+        "id": "2344gw",
         "name": "María López",
         "position": "Supervisor",
-        "image": "trab4.jpeg"
+        "image": "trab4.jpeg",
+        "supervisorId": "4d5e36f"
     },
     {
-        "id": 3,
+        "id": "swer3fs",
         "name": "Carlos García",
         "position": "Técnico",
-        "image": "trab5.jpeg"
+        "image": "trab5.jpeg",
+        "supervisorId": "4d5e36f"
     },
     {
-        "id": 4,
+        "id": "44534g4",
         "name": "Ana Martínez",
         "position": "Analista",
-        "image": "trab2"
+        "image": "trab2",
+        "supervisorId": "4d5e36f"
     },
     {
-        "id": 5,
+        "id": "fdv4g45",
         "name": "Pedro Sánchez",
         "position": "Ingeniero",
-        "image": "trab9"
+        "image": "trab9",
+        "supervisorId": "4d5e36f"
     }
 ]
