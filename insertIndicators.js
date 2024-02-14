@@ -13,14 +13,19 @@ async function insertIndicatorDocument(document) {
         if (response.ok) {
             // La inserción fue exitosa
             console.log('Documento insertado:', data);
-            // Aquí puedes hacer cualquier otra cosa después de la inserción exitosa
+            // Mostrar mensaje de éxito u otra acción deseada
+            showSuccessMessage('Documento insertado exitosamente');
         } else {
             // Hubo un error en la inserción
             console.error('Error al insertar el documento:', data);
+            // Mostrar mensaje de error u otra acción deseada
+            showAlert('error', 'Error al insertar el documento');
         }
     } catch (error) {
         // Capturar errores de red u otros errores
         console.error('Error en la solicitud:', error);
+        // Mostrar mensaje de error u otra acción deseada
+        showAlert('error', 'Error en la solicitud');
     }
 }
 

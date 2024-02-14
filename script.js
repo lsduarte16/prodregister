@@ -12,7 +12,7 @@ loginForm.addEventListener('submit', async function(e) {
 
     try {
         const response = await authenticateUserWithAPI(username, password);
-        console.log(response)
+        //console.log(response)
 
         if (response.success) {
             showAlert('success', response.message);
@@ -40,7 +40,7 @@ loginForm.addEventListener('submit', async function(e) {
             showAlert('error', response.message);
         }
     } catch (error) {
-        console.error('Error:', error);
+        //console.error('Error:', error);
         showAlert('error', 'Error de conexión al cargar datos de usuario');
     }
 });
@@ -76,6 +76,11 @@ async function authenticateUserWithAPI(username, password) {
                 });
 
                 employeesData = await employeesResponse.json();
+                // Convertir a cadena JSON
+                const employeesDataJSON = JSON.stringify(employeesData);
+
+                // Guardar en localStorage
+                localStorage.setItem('employeesData', employeesDataJSON);
 
 
             }
@@ -126,14 +131,19 @@ document.addEventListener('DOMContentLoaded', async function() {
     const prevButton = document.getElementById('prevButton');
     const nextButton = document.getElementById('nextButton');
     const submitButton = document.getElementById('submitButtonSupervisor');
-    const formData = new Array(5).fill({}); // Array para almacenar los datos de cada formulario
+    const formData = []
     let currentPersonIndex = 0;
     
     
-    async function createPersonForm(index, employeesData) {
+    const storedDataJSON = localStorage.getItem('employeesData');
+    //console.log(storedDataJSON)
+    const response = JSON.parse(storedDataJSON);
+    //console.log(response);
+
+    async function createPersonForm(index) {
         // Limpiar el contenedor de formularios de persona antes de agregar uno nuevo
         personFormsContainer.innerHTML = '';
-        console.log(employeesData);
+    
         const personForm = document.createElement('div');
         personForm.classList.add('personForm', 'container-fluid', 'mt-4', 'border', 'p-4', 'rounded'); // Cambiar a container-fluid para ocupar todo el ancho
         personFormsContainer.appendChild(personForm);
@@ -143,22 +153,21 @@ document.addEventListener('DOMContentLoaded', async function() {
         personForm.appendChild(personInfo);
     
         // Obtener los datos de los empleados desde el archivo JSON
-        const response = await fetch('employers.json');
-        console.log(response);
-        const employees = await response.json();
-        console.log(employees);
-        const employee = employees[index];
-        console.log(employee);
+        //const response = await fetch('employers.json');
+        //console.log(response);
+        //const employees = await response.json();
+        //console.log(employees);
+        //const employee = employees[index];
+        //console.log(employee);
 
 
-        // Obtener los datos de los empleados desde el archivo JSON
-        //const response1 = employeesData;
-        //console.log(response1);
-        //console.log(employeesData)
-        //const employees1 = await employeesData;
-        //console.log(employees1);
-        //const employee1 = employees1[index];
-        //console.log(employee1);
+        //Obtener los datos de los empleados desde el archivo JSON
+        
+        //const employees = await response.json();
+        //console.log(employees);
+        const employee = await response[index];
+        //console.log(employee);
+  
 
                 
         // Crear elementos para mostrar la información del empleado
@@ -196,15 +205,26 @@ document.addEventListener('DOMContentLoaded', async function() {
         indicatorsContainer.classList.add('row', 'justify-content-center'); // Centrar los indicadores horizontalmente
         personForm.appendChild(indicatorsContainer);
     
+        const indicadores = [
+            "Preparación",
+            "Scan",
+            "Rearmado",
+            "Recepción",
+            "Ingreso caja",
+            "Despacho",
+            "Envío a externo"
+        ];
+        
+        
         for (let i = 1; i <= 5; i++) {
             const inputDiv = document.createElement('div');
             inputDiv.classList.add('col-md-6', 'mb-3'); // Agregar clases de Bootstrap para columnas
             indicatorsContainer.appendChild(inputDiv);
     
             const input = document.createElement('input');
-            input.type = 'text';
+            input.type = 'number';
             input.classList.add('form-control');
-            input.placeholder = 'Indicador ' + i;
+            input.placeholder = indicadores[i];
             input.required = true;
             input.value = ''; // Vaciar el valor del campo
             inputDiv.appendChild(input);
@@ -218,7 +238,9 @@ document.addEventListener('DOMContentLoaded', async function() {
 
         // Mostrar botones de acción y agregar espaciado superior
         prevButton.style.display = index > 0 ? 'block' : 'none';
-        nextButton.style.display = index < 4 ? 'block' : 'none';
+        nextButton.style.display = currentPersonIndex <response.length -1 ? 'block' : 'none';
+        //console.log( response.length -1 )
+
         prevButton.style.marginTop = '20px';
         nextButton.style.marginTop = '20px';
         
@@ -240,33 +262,50 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Función para manejar el cambio al formulario siguiente
     function goToNextForm() {
-        if (currentPersonIndex < 4) {
+        if (currentPersonIndex < response.length -1) {
             // Guardar los datos del formulario actual antes de avanzar al siguiente
             saveFormData();
-            currentPersonIndex++;
+            // Incrementar el índice solo si no existe ya un formulario para el siguiente índice
+            if (!document.getElementById(`personForm_${currentPersonIndex + 1}`)) {
+                currentPersonIndex++;
+            }
             createPersonForm(currentPersonIndex);
             updateSubmitButtonState();
         }
     }
     
     // Función para guardar los datos del formulario actual en el array formData
-    function saveFormData() {
-    const inputs = document.querySelectorAll('.personForm input');
-    const currentFormData = {};
-        
-    inputs.forEach((input, index) => {
-        currentFormData[`indicator${index + 1}`] = input.value.trim();
+    async function saveFormData(response) {
+        const inputs = document.querySelectorAll('.personForm input');
+
+        // Recorrer cada elemento del array response
+        response.forEach((employee, index) => {
+        const currentFormData = {};
+    
+        // Obtener supervisorId y idemploye del objeto employee
+        const supervisorId = employee.supervisorId;
+        const idemploye = employee.idemploye;
+
+        // Agregar códigos de supervisor y trabajador
+        currentFormData['codigoSupervisor'] = supervisorId;
+        currentFormData['codigoTrabajador'] = idemploye;
+    
+        inputs.forEach((input, i) => {
+            currentFormData[`indicator${i + 1}`] = input.value.trim();
         });
     
-    documentoInsertar = currentFormData;
-    insertIndicatorDocument(documentoInsertar);
-    //formData[currentPersonIndex] = currentFormData;
-    //console.log(formData);
+        // Agregar fecha y hora actual
+        const currentDate = new Date();
+        currentFormData['fechaHora'] = currentDate.toLocaleString();
+
+        // Guardar los datos en formData usando el índice actual
+        formData[index] = currentFormData;
+    });
 }
 
     // Función para actualizar el estado del botón de enviar
     function updateSubmitButtonState() {
-        submitButton.disabled = currentPersonIndex < 4;
+        submitButton.disabled = currentPersonIndex < response.length -1;
     }
 
     // Activar el botón de enviar en el último formulario al inicio
@@ -284,11 +323,14 @@ document.addEventListener('DOMContentLoaded', async function() {
 
     // Manejar el evento del botón de enviar
 
-    submitButton.addEventListener('click', function() {
+    // Dentro del evento del botón de enviar
+    submitButton.addEventListener('click', async function() {
         // Guardar los datos del último formulario antes de enviarlo
-        saveFormData();
-        // Insertar los indicadores en la base de datos
-        insertIndicatorDocument(documentoInsertar);
+        await saveFormData(response);
+        // Insertar cada documento en la base de datos
+        for (let i = 0; i < formData.length; i++) {
+            await insertIndicatorDocument(formData[i]);
+        }
         // Notificar al usuario que el formulario fue enviado exitosamente
         alert('¡Formulario enviado exitosamente!');
     });
